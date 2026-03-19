@@ -1,0 +1,2777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KORN | VIDEO EDITOR / AI VISUAL ARTIST</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- 引入高级中文字体 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <!-- 推荐的图标设置 -->
+  <link rel="icon" href="https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/logo/%E7%94%9F%E6%88%90%E8%89%BA%E6%9C%AF%E5%AD%97%E5%B0%81%E9%9D%A2.png" type="image/png">
+  <link rel="shortcut icon" href="https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/logo/%E7%94%9F%E6%88%90%E8%89%BA%E6%9C%AF%E5%AD%97%E5%B0%81%E9%9D%A2.png" type="image/png">
+ 
+  <!-- 为了兼容性，建议同时添加 -->
+  <link rel="apple-touch-icon" href="https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/logo/%E7%94%9F%E6%88%90%E8%89%BA%E6%9C%AF%E5%AD%97%E5%B0%81%E9%9D%A2.png">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#000000',
+            secondary: '#FFFFFF',
+            accent: '#E5E5E5',
+            gray: {
+              light: '#F5F5F5',
+              dark: '#333333',
+              darker: '#1A1A1A'
+            }
+          },
+          fontFamily: {
+            sans: ['Noto Sans SC', 'Helvetica', 'Arial', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Monaco', 'Consolas', 'monospace']
+          },
+          animation: {
+            'breathe': 'breathe 3s ease-in-out infinite',
+            'grain': 'grain 30s linear infinite',
+            'stroke': 'stroke 2s ease-in-out forwards',
+            'float': 'float 6s ease-in-out infinite',
+            'text-shimmer': 'text-shimmer 3s ease-in-out infinite',
+            'float-rotate': 'float-rotate 15s ease-in-out infinite',
+            'pulse-glow': 'pulse-glow 4s ease-in-out infinite',
+            'wave': 'wave 1.5s ease-in-out infinite',
+            'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
+            'slide-up-blur': 'slide-up-blur 1s ease-out forwards',
+            'zoom-blur': 'zoom-blur 1.2s ease-out forwards',
+            'slide-left-blur': 'slide-left-blur 1s ease-out forwards',
+            'slide-right-blur': 'slide-right-blur 1s ease-out forwards'
+          },
+          keyframes: {
+            breathe: {
+              '0%, 100%': { transform: 'scale(1)' },
+              '50%': { transform: 'scale(1.05)' }
+            },
+            grain: {
+              '0%': { backgroundPosition: '0 0' },
+              '100%': { backgroundPosition: '100px 100px' }
+            },
+            stroke: {
+              '0%': { 
+                'stroke-dashoffset': '1000',
+                'fill-opacity': '0'
+              },
+              '80%': { 
+                'stroke-dashoffset': '0',
+                'fill-opacity': '0'
+              },
+              '100%': { 
+                'stroke-dashoffset': '0',
+                'fill-opacity': '1'
+              }
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' }
+            },
+            'text-shimmer': {
+              '0%': { 'background-position': '-200% center' },
+              '100%': { 'background-position': '200% center' }
+            },
+            'float-rotate': {
+              '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
+              '25%': { transform: 'translate(10px, -15px) rotate(5deg)' },
+              '50%': { transform: 'translate(-5px, -25px) rotate(-3deg)' },
+              '75%': { transform: 'translate(15px, -10px) rotate(2deg)' }
+            },
+            'pulse-glow': {
+              '0%, 100%': { opacity: '0.3', transform: 'scale(1)' },
+              '50%': { opacity: '0.7', transform: 'scale(1.05)' }
+            },
+            wave: {
+              '0%': { transform: 'translateX(0)' },
+              '50%': { transform: 'translateX(10px)' },
+              '100%': { transform: 'translateX(0)' }
+            },
+            'glow-pulse': {
+              '0%, 100%': { 
+                'box-shadow': '0 0 5px rgba(229, 229, 229, 0.5), 0 0 10px rgba(229, 229, 229, 0.3)'
+              },
+              '50%': { 
+                'box-shadow': '0 0 15px rgba(229, 229, 229, 0.8), 0 0 25px rgba(229, 229, 229, 0.5)'
+              }
+            },
+            'slide-up-blur': {
+              '0%': { 
+                opacity: '0',
+                transform: 'translateY(40px) scale(0.95)',
+                filter: 'blur(10px)'
+              },
+              '100%': { 
+                opacity: '1',
+                transform: 'translateY(0) scale(1)',
+                filter: 'blur(0)'
+              }
+            },
+            'zoom-blur': {
+              '0%': { 
+                opacity: '0',
+                transform: 'scale(0.8)',
+                filter: 'blur(10px)'
+              },
+              '100%': { 
+                opacity: '1',
+                transform: 'scale(1)',
+                filter: 'blur(0)'
+              }
+            },
+            'slide-left-blur': {
+              '0%': { 
+                opacity: '0',
+                transform: 'translateX(-40px)',
+                filter: 'blur(10px)'
+              },
+              '100%': { 
+                opacity: '1',
+                transform: 'translateX(0)',
+                filter: 'blur(0)'
+              }
+            },
+            'slide-right-blur': {
+              '0%': { 
+                opacity: '0',
+                transform: 'translateX(40px)',
+                filter: 'blur(10px)'
+              },
+              '100%': { 
+                opacity: '1',
+                transform: 'translateX(0)',
+                filter: 'blur(0)'
+              }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    /* 首页 Hero 区整体氛围提升 */
+    .hero-section {
+      position: relative;
+      padding-top: 18vh;
+      padding-bottom: 18vh;
+      background: #0d0d0d; /* 更深的背景，形成暗影空间 */
+      color: #e8e8e8;
+    }
+    
+    /* 标题更氛围，减少信息感，增加存在感 */
+    .hero-section h1 {
+      font-size: 4.8rem; /* 可以根据你原版略调 */
+      letter-spacing: -0.5px;
+      font-weight: 500;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+    
+    /* 副标题弱化叙述感，增强"观察者"氛围 */
+    .hero-section p {
+      font-size: 1.1rem;
+      opacity: 0.68;
+      line-height: 1.7;
+    }
+    
+    /* 背景轻微胶片暗角（时尚感来源） */
+    .hero-section::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+    }
+    
+    /* 进入视口时淡入 */
+    .hero-section {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1.4s ease, transform 1.4s ease;
+    }
+    .hero-section.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    @layer utilities {
+      .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      .text-stroke {
+        -webkit-text-stroke: 1px white;
+        color: transparent;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .animate-draw {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        animation: draw 0.8s ease forwards;
+      }
+      @keyframes draw {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      .animate-fade-in {
+        opacity: 0;
+        animation: fadeIn 0.5s ease forwards;
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+      .animate-slide-up {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: slideUp 0.5s ease forwards;
+      }
+      @keyframes slideUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-slide-in-left {
+        opacity: 0;
+        transform: translateX(-50%);
+        animation: slideInLeft 0.8s ease forwards;
+      }
+      @keyframes slideInLeft {
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .animate-slide-in-right {
+        opacity: 0;
+        transform: translateX(50%);
+        animation: slideInRight 0.8s ease forwards;
+      }
+      @keyframes slideInRight {
+        to {
+          opacity: 1;
+          transform: 'translateX(0)';
+        }
+      }
+      .animate-rotate {
+        transition: transform 0.3s ease;
+      }
+      .animate-rotate:hover {
+        transform: rotate(15deg);
+      }
+      .grain {
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        animation: grain 30s linear infinite;
+      }
+      .animate-blur-in {
+        opacity: 0;
+        filter: blur(10px);
+        animation: blurIn 0.8s ease forwards;
+      }
+      @keyframes blurIn {
+        to {
+          opacity: 1;
+          filter: blur(0);
+        }
+      }
+      .animate-scale-in {
+        opacity: 0;
+        transform: scale(0.8);
+        animation: scaleIn 0.5s ease forwards;
+      }
+      @keyframes scaleIn {
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .search-results {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .text-gradient {
+        background: linear-gradient(90deg, #FFFFFF, #CCCCCC, #FFFFFF);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+	  
+      .hover-lift {
+        transition: all 0.3s ease;
+      }
+      .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+      .korn-text {
+        -webkit-text-stroke: 1px white;
+        color: transparent;
+        animation: korn-animation 3s ease-in-out infinite alternate;
+      }
+      @keyframes korn-animation {
+        0% {
+          -webkit-text-stroke: 1px white;
+          text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+        100% {
+          -webkit-text-stroke: 1px white;
+          text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+        }
+      }
+      /* 新增：限制标题行数，防止文字溢出 */
+      .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      /* 新增：视频卡片信息区域样式 */
+      .work-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+        padding: 1.5rem 1rem 1rem;
+        transition: all 0.3s ease;
+      }
+    @media (max-width: 768px) {
+      .work-info {
+        padding: 1rem 0.75rem 0.75rem;
+      }
+      .work-title {
+        font-size: 0.75rem; /* 减小字体大小 */
+        line-height: 1.25rem;
+        white-space: nowrap; /* 防止换行 */
+        overflow: hidden;
+        text-overflow: ellipsis; /* 溢出时显示省略号 */
+      }
+      .work-meta {
+        font-size: 0.75rem;
+        line-height: 1rem;
+      }
+    }
+      
+      /* 新增：AI作品放大镜效果样式 - 修改版 */
+      .magnifier-container {
+        position: relative;
+        overflow: hidden;
+        cursor: none;
+      }
+      
+      .magnifier-lens {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 20;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+      }
+      
+      .magnifier-lens.active {
+        opacity: 1;
+      }
+      
+      .magnifier-lens img {
+        position: absolute;
+        width: auto;
+        height: auto;
+        max-width: none;
+        transform-origin: 0 0;
+      }
+      
+      /* 新增：不规则文字排版样式 */
+      .artistic-text {
+        position: absolute;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.7);
+        z-index: 5;
+        pointer-events: none;
+      }
+      
+      .artistic-text-1 {
+        top: 20%;
+        left: 10%;
+        font-size: 1.2rem;
+        transform: rotate(-5deg);
+        animation: float-rotate 15s ease-in-out infinite;
+      }
+      
+      .artistic-text-2 {
+        top: 30%;
+        right: 15%;
+        font-size: 1.5rem;
+        transform: rotate(3deg);
+        animation: float-rotate 18s ease-in-out infinite reverse;
+      }
+      
+      .artistic-text-3 {
+        bottom: 25%;
+        left: 15%;
+        font-size: 1.1rem;
+        transform: rotate(-2deg);
+        animation: float-rotate 20s ease-in-out infinite;
+      }
+      
+      .artistic-text-4 {
+        bottom: 35%;
+        right: 10%;
+        font-size: 1.3rem;
+        transform: rotate(4deg);
+        animation: float-rotate 16s ease-in-out infinite reverse;
+      }
+      
+      .artistic-text-5 {
+        top: 45%;
+        left: 5%;
+        font-size: 1rem;
+        transform: rotate(-3deg);
+        animation: float-rotate 22s ease-in-out infinite;
+      }
+      
+      .artistic-glow {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        filter: blur(10px);
+        z-index: 1;
+        animation: pulse-glow 4s ease-in-out infinite;
+      }
+      
+      .glow-1 {
+        top: 15%;
+        left: 20%;
+        width: 150px;
+        height: 150px;
+      }
+      
+      .glow-2 {
+        bottom: 20%;
+        right: 25%;
+        width: 180px;
+        height: 180px;
+        animation-delay: 2s;
+      }
+      
+      /* 关于我部分技能项动画 */
+      .skill-item {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .skill-item.is-visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+
+      /* 技能图标hover效果 */
+      .skill-icon {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .skill-icon::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.7s ease;
+      }
+
+      .skill-item:hover .skill-icon::after {
+        left: 100%;
+      }
+
+      /* 工具标签动画 */
+      .tool-item {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .tool-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(229, 229, 229, 0.2), transparent);
+        transition: left 0.6s ease;
+      }
+
+      .tool-item:hover::before {
+        left: 100%;
+      }
+
+      /* 头像容器特殊效果 */
+      .avatar-container {
+        position: relative;
+      }
+
+      .avatar-container::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(45deg, #E5E5E5, transparent, #E5E5E5);
+        border-radius: 50%;
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .avatar-container:hover::before {
+        opacity: 0.5;
+        animation: rotate 3s linear infinite;
+      }
+
+      @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    }
+  </style>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      /* 导航栏高级下划线效果 */
+      .nav-link-advanced {
+        position: relative;
+        display: inline-block;
+        transition: color 0.3s ease;
+      }
+      
+      .nav-link-advanced::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #E5E5E5, transparent);
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        opacity: 0;
+      }
+      
+      .nav-link-advanced:hover::after {
+        width: 100%;
+        left: 0;
+        opacity: 1;
+        animation: underline-expand 0.4s ease-out forwards;
+      }
+      
+      .nav-link-advanced:not(:hover)::after {
+        animation: underline-shrink 0.3s ease-in forwards;
+      }
+      
+      .nav-link-advanced:hover {
+        color: #E5E5E5;
+      }
+      
+      /* 原有的导航栏样式保留 */
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      /* 视频作品分类导航栏高级动画效果 */
+      .category-btn {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transform-origin: center;
+      }
+      
+      .category-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: left 0.6s ease;
+      }
+      
+      .category-btn:hover::before {
+        left: 100%;
+      }
+      
+      .category-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        animation: glow-pulse 2s ease-in-out infinite;
+      }
+      
+      .category-btn.active {
+        background-color: #E5E5E5;
+        color: #000000;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(229, 229, 229, 0.4);
+      }
+      
+      /* 搜索框高级动画效果 */
+      .search-container {
+        position: relative;
+        transition: all 0.4s ease;
+		  z-index: 9999; /* 增加到更高的值 */
+      }
+      
+      .search-container:focus-within {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+		  z-index: 9999; /* 增加到更高的值 */
+      }
+      
+      .search-input {
+        transition: all 0.4s ease;
+      }
+      
+      .search-input:focus {
+        box-shadow: 0 0 0 2px rgba(229, 229, 229, 0.5);
+      }
+      
+      .search-btn {
+        transition: all 0.3s ease;
+      }
+      
+      .search-btn:hover {
+        transform: scale(1.1) rotate(5deg);
+      }
+      
+      /* 修复搜索结果框样式 */
+ #search-results {
+   position: absolute;
+   top: 100%;
+   left: 0;
+   right: 0;
+   z-index: 9999;
+   background: rgba(0, 0, 0, 0.95);
+   backdrop-filter: blur(10px);
+   border: 1px solid rgba(255, 255, 255, 0.2);
+   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+ }
+      #search-results div {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+		  z-index: 9999; /* 增加到更高的值 */
+      }
+      
+    
+      
+      #search-results div:last-child {
+        border-bottom: none;
+		  z-index: 9999; /* 增加到更高的值 */
+      }
+    }
+  </style>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      /* 新增：高级下划线动画效果 */
+      .contact-link {
+        position: relative;
+        display: inline-block;
+        transition: color 0.3s ease;
+      }
+      
+      .contact-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        width: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #E5E5E5, transparent);
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        opacity: 0;
+      }
+      
+      .contact-link:hover::after {
+        width: 100%;
+        left: 0;
+        opacity: 1;
+        animation: underline-expand 0.4s ease-out forwards;
+      }
+      
+      .contact-link:hover {
+        color: #E5E5E5;
+      }
+      
+      /* 新增：版权图标动画 */
+      .copyright-icon {
+        animation: float 6s ease-in-out infinite;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+      }
+      
+      .copyright-icon:hover {
+        animation: float 2s ease-in-out infinite, pulse-glow 2s ease-in-out infinite;
+      }
+      
+      /* 新增：声明框动画 */
+      .declaration-box {
+        background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .declaration-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+        transition: left 0.7s ease;
+      }
+      
+      .declaration-box:hover::before {
+        left: 100%;
+      }
+    }
+	#works-grid {
+	  position: relative;
+	  z-index: 1; /* 确保比搜索结果低 */
+	}
+  </style>
+  <style type="text/tailwindcss">
+      @layer utilities {
+        /* 新增：个人经历时间线样式 - 修复版 */
+        .timeline-item {
+          position: relative;
+          padding: 2rem 0;
+          opacity: 0;
+          transform: translateY(30px);
+          transition: all 0.6s ease;
+          min-height: 120px; /* 确保最小高度，避免内容重叠 */
+        }
+        
+        .timeline-item.is-visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        
+        .timeline-dot {
+          position: absolute;
+          left: 0;
+          top: 2.5rem;
+          width: 12px;
+          height: 12px;
+          background-color: #E5E5E5;
+          border-radius: 50%;
+          z-index: 10;
+          transition: all 0.3s ease;
+          box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.5); /* 添加黑色阴影确保可读性 */
+        }
+        
+        .timeline-content {
+          padding-left: 2.5rem;
+          position: relative;
+          margin-left: 8px; /* 添加左边距，避免文字紧贴圆点 */
+        }
+        
+        .timeline-period {
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: #E5E5E5;
+          margin-bottom: 0.5rem;
+          transition: all 0.3s ease;
+          display: inline-block;
+          background-color: rgba(0, 0, 0, 0.7); /* 添加背景确保可读性 */
+          padding: 2px 8px;
+          border-radius: 4px;
+        }
+        
+        .timeline-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: white;
+          margin-bottom: 0.75rem;
+          transition: all 0.3s ease;
+        }
+        
+        .timeline-description {
+          color: rgba(255, 255, 255, 0.7);
+          line-height: 1.6;
+          max-width: 600px;
+          transition: all 0.3s ease;
+        }
+        
+        .timeline-item:hover .timeline-dot {
+          transform: scale(1.5);
+          background-color: white;
+          box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        
+        .timeline-item:hover .timeline-period {
+          color: white;
+          text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+          background-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        .timeline-item:hover .timeline-title {
+          transform: translateX(10px);
+          color: #E5E5E5;
+        }
+        
+        .timeline-item:hover .timeline-description {
+          color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* 时间线连接线 */
+        .timeline-connector {
+          position: absolute;
+          left: 5.5px;
+          top: 2.5rem;
+          width: 2px;
+          height: calc(100% - 2.5rem);
+          background: linear-gradient(to bottom, #E5E5E5, transparent);
+          z-index: 5;
+        }
+        
+        /* 最后一个时间线项目不需要连接线 */
+        .timeline-item:last-child .timeline-connector {
+          display: none;
+        }
+        
+        /* 移动端时间线布局 - 修复：确保文字不会与原点重叠 */
+        @media (max-width: 767px) {
+          .timeline-item {
+            padding-left: 1.5rem; /* 增加左边距 */
+            padding-right: 1rem;
+          }
+          
+          .timeline-dot {
+            left: 0.5rem; /* 调整原点位置 */
+            top: 2.5rem;
+          }
+          
+          .timeline-content {
+            padding-left: 2rem; /* 减少内容区域的padding-left */
+            margin-left: 0;
+          }
+          
+          .timeline-period {
+            font-size: 1.1rem;
+            padding: 2px 6px;
+          }
+          
+          .timeline-title {
+            font-size: 1.3rem;
+          }
+          
+          .timeline-connector {
+            left: 0.9rem; /* 调整连接线位置 */
+          }
+        }
+        
+        /* PC端时间线布局 - 修复：左右交替，确保缩放时不会重叠 */
+        @media (min-width: 768px) {
+          .timeline-item {
+            padding-left: 50%;
+            padding-right: 2rem;
+            min-height: 150px; /* PC端增加最小高度 */
+          }
+          
+          .timeline-item:nth-child(even) {
+            padding-left: 2rem;
+            padding-right: 50%;
+          }
+          
+          .timeline-dot {
+            left: 50%;
+            transform: translateX(-50%);
+          }
+          
+          .timeline-item:nth-child(even) .timeline-dot {
+            left: auto;
+            right: 50%;
+            transform: translateX(50%);
+          }
+          
+          .timeline-content {
+            padding-left: 0;
+            margin-left: 0;
+          }
+          
+          .timeline-item:nth-child(odd) .timeline-content {
+            padding-left: 3rem; /* 奇数项左侧增加内边距 */
+            text-align: left;
+          }
+          
+          .timeline-item:nth-child(even) .timeline-content {
+            padding-right: 3rem; /* 偶数项右侧增加内边距 */
+            text-align: right;
+          }
+          
+          .timeline-connector {
+            left: 50%;
+            transform: translateX(-50%);
+            height: 100%;
+            top: 0;
+            background: linear-gradient(to bottom, transparent, #E5E5E5, #E5E5E5, transparent);
+          }
+          
+          .timeline-item:nth-child(even):hover .timeline-title {
+            transform: translateX(-10px);
+          }
+          
+          /* 为时间点添加背景确保在缩放时可见 */
+          .timeline-period {
+            position: relative;
+            z-index: 2;
+          }
+          
+          /* 确保连接线在原点后面 */
+          .timeline-dot {
+            z-index: 15;
+          }
+          
+          .timeline-connector {
+            z-index: 5;
+          }
+        }
+        
+        /* 中等屏幕尺寸的额外调整 */
+        @media (min-width: 768px) and (max-width: 1024px) {
+          .timeline-item {
+            padding-left: 45%;
+            padding-right: 1.5rem;
+          }
+          
+          .timeline-item:nth-child(even) {
+            padding-left: 1.5rem;
+            padding-right: 45%;
+          }
+          
+          .timeline-item:nth-child(odd) .timeline-content {
+            padding-left: 2.5rem;
+          }
+          
+          .timeline-item:nth-child(even) .timeline-content {
+            padding-right: 2.5rem;
+          }
+        }
+        
+        /* 大屏幕优化 */
+        @media (min-width: 1025px) {
+          .timeline-item {
+            padding-left: 45%;
+            padding-right: 3rem;
+          }
+          
+          .timeline-item:nth-child(even) {
+            padding-left: 3rem;
+            padding-right: 45%;
+          }
+          
+          .timeline-item:nth-child(odd) .timeline-content {
+            padding-left: 4rem;
+          }
+          
+          .timeline-item:nth-child(even) .timeline-content {
+            padding-right: 4rem;
+          }
+        }
+      }
+      
+      .fade-in, section, .project-item {
+        opacity: 0;
+        transform: translateY(35px);
+        transition: opacity 1.3s ease, transform 1.3s ease;
+      }
+      
+      .is-visible {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+      }
+    </style>
+</head>
+<body class="bg-black text-white overflow-x-hidden">
+  <!-- 顶部主导航栏 -->
+  <nav id="navbar" class="fixed top-0 left-0 w-full z-50 bg-transparent transition-all duration-500">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="h-14 flex items-center">
+        <img src="https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/logo/koutu_.png" alt="KORN" class="h-full object-contain">
+      </div>
+      <div class="hidden md:flex space-x-8 text-sm tracking-widest">
+        <a href="#works" class="nav-link-advanced hover:text-accent transition-all duration-300 relative">
+          视频作品
+        </a>
+        <a href="#ai-gallery" class="nav-link-advanced hover:text-accent transition-all duration-300 relative">
+          AI视觉
+        </a>
+       
+        <a href="#about" class="nav-link-advanced hover:text-accent transition-all duration-300 relative">
+          关于我
+        </a>
+		<a href="#experience" class="nav-link-advanced hover:text-accent transition-all duration-300 relative">
+		  个人经历
+		</a>
+        <a href="#contact" class="nav-link-advanced hover:text-accent transition-all duration-300 relative">
+          联系我
+        </a>
+      </div>
+      <div class="md:hidden">
+        <button id="mobile-menu-btn" class="text-white hover:text-accent transition-colors duration-300">
+          <i class="fa fa-bars text-xl"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- 移动端菜单 -->
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-darker bg-opacity-95 w-full glass-effect">
+      <div class="container mx-auto px-4 py-4 flex flex-col space-y-4 text-sm tracking-widest text-center">
+        <a href="#works" class="nav-link-advanced hover:text-accent transition-colors duration-300 py-2">视频作品</a>
+        <a href="#ai-gallery" class="nav-link-advanced hover:text-accent transition-colors duration-300 py-2">AI视觉</a>
+        <a href="#about" class="nav-link-advanced hover:text-accent transition-colors duration-300 py-2">关于我</a>
+		  <a href="#experience" class="nav-link-advanced hover:text-accent transition-colors duration-300 py-2">个人经历</a>
+        <a href="#contact" class="nav-link-advanced hover:text-accent transition-colors duration-300 py-2">联系我</a>
+      </div>
+    </div>
+  </nav>
+
+  <section id="hero" class="relative h-screen w-full overflow-hidden">
+    <!-- 光晕效果 -->
+    <div class="artistic-glow glow-1"></div>
+    <div class="artistic-glow glow-2"></div>
+    
+    <div class="absolute inset-0 z-0">
+      <video id="hero-video" class="w-full h-full object-cover opacity-0" loop="" muted="" playsinline="">
+        <source src="https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/logo/VID_20251028121406294.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-60"></div>
+    </div>
+    <div class="absolute inset-0 z-10 px-8 flex flex-col justify-between">
+      <div class="pt-24">
+        <div class="animate-slide-in-left" style="animation-delay: 0.2s; transform: translateX(-5%);">
+          <!-- 修改后的KORN文字 - 更小且使用镂空效果 -->
+          <div class="relative flex justify-center">
+            <h1 class="text-[10vw] md:text-[8vw] font-black leading-none korn-text">KORN</h1>
+          </div>
+        </div>
+        <div class="mt-4 animate-slide-in-left" style="animation-delay: 0.4s; transform: translateX(-10%);">
+          <p class="text-[3vw] md:text-[2.5vw] font-light text-gray-light font-mono"> CREATIVITY</p>
+        </div>
+      </div>
+      
+      <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+        <div class="animate-slide-in-right" style="animation-delay: 0.7s; transform: rotate(-2deg);">
+          <h2 class="text-[5vw] md:text-[4vw] font-light text-gray-light italic">VIDEO EDITOR </h2>
+        </div>
+        <div class="mt-6 md:mt-0 animate-slide-in-right" style="animation-delay: 0.9s; transform: rotate(1deg);">
+          <h2 class="text-[5vw] md:text-[4vw] font-light text-gray-light italic">AI VISUAL ARTIST</h2>
+        </div>
+      </div>
+    </div>
+    <div class="absolute bottom-8 left-0 right-0 z-10 flex justify-center">
+      <div class="animate-breathe animate-fade-in flex flex-col items-center" style="animation-delay: 1.2s;">
+        <p class="text-sm tracking-widest font-mono mb-2">向下滚动探索</p>
+        <!-- 向下箭头 -->
+        <div class="arrow-down animate-bounce w-6 h-6 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Works Section - 使用slide-up-blur动画 -->
+  <section id="works" class="py-20 bg-gray-darker animate-slide-up-blur">
+    <div class="px-0">
+      <h2 class="text-[8vw] md:text-[6vw] font-black leading-none text-center mb-16 text-gradient">视频作品 </h2>
+      
+      <!-- 视频作品分类导航栏 - 添加了高级动画效果 -->
+      <div class="mb-12 flex justify-center">
+        <div class="flex flex-wrap justify-center gap-4 text-sm tracking-widest">
+          <button class="category-btn active px-4 py-2 glass-effect hover:bg-accent hover:text-black transition-all duration-300 rounded-sm" data-category="all">全部</button>
+          <button class="category-btn px-4 py-2 glass-effect hover:bg-accent hover:text-black transition-all duration-300 rounded-sm" data-category="活动快剪">活动快剪</button>
+          <button class="category-btn px-4 py-2 glass-effect hover:bg-accent hover:text-black transition-all duration-300 rounded-sm" data-category="地产类">地产类</button>
+          <button class="category-btn px-4 py-2 glass-effect hover:bg-accent hover:text-black transition-all duration-300 rounded-sm" data-category="汽车类">汽车类</button>
+          <button class="category-btn px-4 py-2 glass-effect hover:bg-accent hover:text-black transition-all duration-300 rounded-sm" data-category="企业产品">企业产品</button>
+          <button class="category-btn px-4 py-2 glass-effect hover:bg-accent hover:text-black transition-all duration-300 rounded-sm" data-category="AIGC">AIGC</button>
+        </div>
+      </div>
+      
+      <!-- 搜索框 - 添加了高级动画效果 -->
+      <div class="mb-12 flex justify-center">
+        <div class="search-container relative w-full max-w-lg">
+          <input type="text" id="search-input" placeholder="搜索作品..." class="search-input w-full bg-transparent border border-white border-opacity-30 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all duration-300 glass-effect rounded-sm">
+          <button id="search-btn" class="search-btn absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-accent text-black hover:bg-white transition-all duration-300 rounded-sm">
+            <i class="fa fa-search"></i>
+          </button>
+          <!-- 搜索结果下拉框 -->
+          <div id="search-results" class="absolute top-full left-0 right-0 glass-effect border border-white border-opacity-30 mt-1 hidden z-10 search-results scrollbar-hide rounded-sm"></div>
+        </div>
+      </div>
+      
+      <div id="works-grid" class="grid grid-cols-2 md:grid-cols-3 gap-0 ">
+        <!-- Works will be loaded here by JavaScript -->
+      </div>
+      
+      <!-- 加载更多按钮 -->
+      <div class="mt-12 flex justify-center">
+        <button id="load-more-works" class="px-6 py-3 glass-effect hover:bg-accent hover:text-black transition-all duration-300 rounded-sm font-medium">
+          加载更多
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Gallery Section - 使用zoom-blur动画 -->
+  <section id="ai-gallery" class="py-20 bg-black relative overflow-hidden animate-zoom-blur">
+    <div class="absolute inset-0 grain opacity-20"></div>
+    <div class="px-0 relative z-10">
+      <!-- 调整flex布局为居中对齐 -->
+      <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mb-12">
+        <h2 class="text-[8vw] md:text-[6vw] font-black leading-none text-gradient">AI视觉</h2>
+        <div class="text-gray-light font-mono">
+          <p>16:9 / 9:16</p>
+        </div>
+      </div>
+      
+      <!-- AI作品网格布局 - 横屏和竖屏上下错开排列 -->
+      <div id="ai-works-grid" class="grid grid-cols-2 md:grid-cols-4 gap-0">
+        <!-- AI Works will be loaded here by JavaScript -->
+      </div>
+      
+      <!-- 加载更多按钮 -->
+      <div class="mt-12 flex justify-center">
+        <button id="load-more-ai" class="px-6 py-3 glass-effect hover:bg-accent hover:text-black transition-all duration-300 rounded-sm font-medium">
+          加载更多
+        </button>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <!-- About Section - 使用slide-right-blur动画 -->
+  <section id="about" class="py-20 bg-black relative animate-slide-right-blur">
+    <div class="absolute inset-0 grain opacity-10"></div>
+    <div class="container mx-auto px-4 relative z-10">
+      <h2 class="text-[8vw] md:text-[6vw] font-black leading-none text-center mb-16 text-gradient">关于我</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <!-- 左侧头像区域 -->
+        <div class="md:col-span-4 flex flex-col items-center">
+          <div class="relative mb-6 animate-zoom-blur" style="animation-delay: 0.2s;">
+            <div class="avatar-container w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden glass-effect border-2 border-accent border-opacity-30 relative group">
+              <img 
+                src="https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/logo/koutu_.png" 
+                alt="KORN 头像" 
+                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+              >
+              <!-- 头像光晕效果 -->
+              <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-accent to-transparent opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
+            </div>
+            
+            <!-- 浮动装饰元素 -->
+            <div class="absolute -top-4 -left-4 w-16 h-16 bg-accent rounded-full opacity-20 animate-float-rotate"></div>
+            <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-accent rounded-full opacity-30 animate-float-rotate" style="animation-delay: 1s;"></div>
+          </div>
+          
+          <!-- 头像下方标签 -->
+          <div class="text-center animate-slide-up-blur" style="animation-delay: 0.4s;">
+            <h3 class="text-2xl font-bold mb-2">KORN / 殷健翔</h3>
+            <p class="text-gray-light font-mono text-sm mb-4">VIDEO EDITOR / AI VISUAL ARTIST</p>
+            <div class="flex flex-wrap justify-center gap-2">
+              <span class="px-3 py-1 bg-gray-dark text-xs rounded-full border border-accent border-opacity-30">创意视觉</span>
+              <span class="px-3 py-1 bg-gray-dark text-xs rounded-full border border-accent border-opacity-30">AI艺术</span>
+              <span class="px-3 py-1 bg-gray-dark text-xs rounded-full border border-accent border-opacity-30">视频叙事</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 右侧介绍和技能区域 -->
+        <div class="md:col-span-8">
+          <!-- 个人介绍 -->
+          <div class="mb-10 animate-slide-left-blur" style="animation-delay: 0.3s;">
+            <div class="glass-effect p-6 rounded-sm">
+              <div class="flex items-center mb-4">
+                <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center mr-4">
+                  <i class="fa fa-user text-black"></i>
+                </div>
+                <h3 class="text-xl font-bold text-accent">设计理念</h3>
+              </div>
+              <p class="text-gray-light leading-relaxed mb-4">
+                我是一名专注于当下视觉叙事与AI数字艺术融合的视频剪辑师。相信优秀的设计不仅要有视觉冲击力，更要通过精准的节奏把控和创意表达，将品牌故事转化为引人入胜的视觉体验。
+              </p>
+              <p class="text-gray-light leading-relaxed">
+                我的创作理念是"技术为骨，创意为魂"，通过视觉技术与影视语言结合，创造出既具艺术感又符合商业传播需求的视觉作品。每一帧画面、每一次转场、每一处特效都经过精心设计，追求极致的视觉呈现。
+              </p>
+            </div>
+          </div>
+          
+          <!-- 专业技能 -->
+          <div class="animate-slide-up-blur" style="animation-delay: 0.5s;">
+            <div class="flex items-center mb-6">
+              <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center mr-4">
+                <i class="fa fa-star text-black"></i>
+              </div>
+              <h3 class="text-xl font-bold text-accent">专业技能</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- 技能项 1 -->
+              <div class="skill-item group glass-effect p-5 rounded-sm hover-lift border border-white border-opacity-0 hover:border-opacity-20 transition-all duration-500">
+                <div class="flex items-start mb-3">
+                  <div class="skill-icon w-12 h-12 bg-accent bg-opacity-20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-opacity-30 transition-all duration-300">
+                    <i class="fa fa-film text-accent text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-lg mb-1">视频剪辑与包装</h4>
+                    <div class="skill-bar w-full h-1 bg-gray-dark rounded-full overflow-hidden">
+                      <div class="skill-level h-full bg-gradient-to-r from-accent to-transparent rounded-full w-0 group-hover:w-11/12 transition-all duration-1000" style="transition-delay: 0.1s;"></div>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-sm text-gray-light">DaVinci Resolve,Final Cut Pro,剪映等专业剪辑软件,熟悉并具备影视剪辑思维与镜头语言。</p>
+              </div>
+              
+              <!-- 技能项 2 -->
+              <div class="skill-item group glass-effect p-5 rounded-sm hover-lift border border-white border-opacity-0 hover:border-opacity-20 transition-all duration-500">
+                <div class="flex items-start mb-3">
+                  <div class="skill-icon w-12 h-12 bg-accent bg-opacity-20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-opacity-30 transition-all duration-300">
+                    <i class="fa fa-magic text-accent text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-lg mb-1">AI视觉艺术</h4>
+                    <div class="skill-bar w-full h-1 bg-gray-dark rounded-full overflow-hidden">
+                      <div class="skill-level h-full bg-gradient-to-r from-accent to-transparent rounded-full w-0 group-hover:w-10/12 transition-all duration-1000" style="transition-delay: 0.2s;"></div>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-sm text-gray-light">Midjourney,Liblibd大模型,tapnow工作流,Nano Banana,Gemini,可灵,即梦,Veo3等AI工具创作视觉内容与动态影像。</p>
+              </div>
+              
+              <!-- 技能项 3 -->
+              <div class="skill-item group glass-effect p-5 rounded-sm hover-lift border border-white border-opacity-0 hover:border-opacity-20 transition-all duration-500">
+                <div class="flex items-start mb-3">
+                  <div class="skill-icon w-12 h-12 bg-accent bg-opacity-20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-opacity-30 transition-all duration-300">
+                    <i class="fa fa-bullseye text-accent text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-lg mb-1">视觉叙事</h4>
+                    <div class="skill-bar w-full h-1 bg-gray-dark rounded-full overflow-hidden">
+                      <div class="skill-level h-full bg-gradient-to-r from-accent to-transparent rounded-full w-0 group-hover:w-9/12 transition-all duration-1000" style="transition-delay: 0.3s;"></div>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-sm text-gray-light">擅长品牌视觉叙事，通过镜头语言和节奏把控，将商业诉求转化为动人故事。</p>
+              </div>
+              
+              <!-- 技能项 4 -->
+              <div class="skill-item group glass-effect p-5 rounded-sm hover-lift border border-white border-opacity-0 hover:border-opacity-20 transition-all duration-500">
+                <div class="flex items-start mb-3">
+                  <div class="skill-icon w-12 h-12 bg-accent bg-opacity-20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-opacity-30 transition-all duration-300">
+                    <i class="fa fa-lightbulb-o text-accent text-xl"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-lg mb-1">创意策划</h4>
+                    <div class="skill-bar w-full h-1 bg-gray-dark rounded-full overflow-hidden">
+                      <div class="skill-level h-full bg-gradient-to-r from-accent to-transparent rounded-full w-0 group-hover:w-10/12 transition-all duration-1000" style="transition-delay: 0.4s;"></div>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-sm text-gray-light">从0到1的创意策划能力，擅长将抽象概念转化为可执行的视觉方案。</p>
+              </div>
+            </div>
+            
+            <!-- 工具软件技能 -->
+            <div class="mt-8 animate-slide-right-blur" style="animation-delay: 0.7s;">
+              <h4 class="font-bold text-lg mb-4 text-accent">工具与软件</h4>
+              <div class="flex flex-wrap gap-3">
+				<div class="tool-item px-4 py-2 glass-effect rounded-full text-sm hover:bg-accent hover:text-black transition-all duration-300 hover:scale-105">DaVinci Resolve</div>
+                <div class="tool-item px-4 py-2 glass-effect rounded-full text-sm hover:bg-accent hover:text-black transition-all duration-300 hover:scale-105">Premiere Pro</div>
+                <div class="tool-item px-4 py-2 glass-effect rounded-full text-sm hover:bg-accent hover:text-black transition-all duration-300 hover:scale-105">Final Cut Pro</div>
+                <div class="tool-item px-4 py-2 glass-effect rounded-full text-sm hover:bg-accent hover:text-black transition-all duration-300 hover:scale-105">Midjourney</div>
+                <div class="tool-item px-4 py-2 glass-effect rounded-full text-sm hover:bg-accent hover:text-black transition-all duration-300 hover:scale-105">Kling ai</div>
+				<div class="tool-item px-4 py-2 glass-effect rounded-full text-sm hover:bg-accent hover:text-black transition-all duration-300 hover:scale-105">Nano Banana</div>
+				<div class="tool-item px-4 py-2 glass-effect rounded-full text-sm hover:bg-accent hover:text-black transition-all duration-300 hover:scale-105">Gemini</div>
+                <div class="tool-item px-4 py-2 glass-effect rounded-full text-sm hover:bg-accent hover:text-black transition-all duration-300 hover:scale-105">HBuilderX</div>
+                <div class="tool-item px-4 py-2 glass-effect rounded-full text-sm hover:bg-accent hover:text-black transition-all duration-300 hover:scale-105">VS Code</div>
+                <div class="tool-item px-4 py-2 glass-effect rounded-full text-sm hover:bg-accent hover:text-black transition-all duration-300 hover:scale-105">Photoshop</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+<!-- Experience Section - 重新设计的时间线布局 -->
+<section id="experience" class="py-20 bg-gray-darker relative">
+  <div class="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-black to-transparent"></div>
+  <div class="container mx-auto px-4">
+    <h2 class="text-[6vw] font-black leading-none text-center mb-16 text-gradient">个人经历</h2>
+    
+    <!-- 时间线容器 -->
+    <div class="relative max-w-6xl mx-auto">
+      <!-- 时间线项目容器 -->
+      <div class="timeline-items">
+        <!-- 时间线连接线 - 移动到项目容器内部 -->
+        <div class="timeline-connector absolute left-0 top-0 h-full md:left-1/2 md:-translate-x-1/2"></div>
+        
+        <!-- 第一个时间线项目 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-period">2003</div>
+            <h3 class="timeline-title">魔童降世</h3>
+            <p class="timeline-description">21世纪2003年一位魔童诞生于广州,从出生其他就意识到他身上肩负着不同凡响的命运</p>
+          </div>
+        </div>
+        
+        <!-- 第二个时间线项目 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-period">2009-2021</div>
+            <h3 class="timeline-title">闭关深造</h3>
+            <p class="timeline-description"></p>
+          </div>
+        </div>
+        
+        <!-- 第三个时间线项目 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-period">2021-2025</div>
+            <h3 class="timeline-title">重庆市巴南区重庆工程学院数字媒体技术</h3>
+            <p class="timeline-description"></p>
+          </div>
+        </div>
+        
+        <!-- 第四个时间线项目 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-period">2025-至今</div>
+            <h3 class="timeline-title">视频剪辑师</h3>
+            <p class="timeline-description">专注于艺术创作与视频剪辑，探索数字艺术新边界</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <!-- Contact Section - 使用slide-right-blur动画 -->
+  <section id="contact" class="py-20 relative animate-slide-right-blur" style="background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);">
+    <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-darker to-transparent opacity-50"></div>
+    <div class="container mx-auto px-4">
+      <h2 class="text-[8vw] md:text-[6vw] font-black leading-none mb-8 text-gradient">联系我</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        <div class="order-2 md:order-1">
+          <div class="space-y-6">
+            <div class="flex items-center space-x-4 contact-item glass-effect p-4 rounded-sm hover-lift">
+              <i class="fa fa-weixin text-xl w-8 text-center text-accent"></i>
+              <span class="text-lg contact-link">yjx17823111488</span>
+            </div>
+            <div class="flex items-center space-x-4 contact-item glass-effect p-4 rounded-sm hover-lift">
+              <i class="fa fa-phone text-xl w-8 text-center text-accent"></i>
+              <span class="text-lg contact-link">+86 17823111488</span>
+            </div>
+            <div class="flex items-center space-x-4 contact-item glass-effect p-4 rounded-sm hover-lift">
+              <i class="fa fa-instagram text-xl w-8 text-center text-accent"></i>
+              <span class="text-lg contact-link">jianxiangyin802</span>
+            </div>
+            <!-- 替换为WEB网站图标（fa-globe） -->
+            <div class="flex items-center space-x-4 contact-item glass-effect p-4 rounded-sm hover-lift">
+              <i class="fa fa-globe text-xl w-8 text-center text-accent"></i>
+              <span class="text-lg contact-link">https://korn-about.netlify.app/</span>
+            </div>
+            <div class="flex items-center space-x-4 contact-item glass-effect p-4 rounded-sm hover-lift">
+              <i class="fa fa-envelope text-xl w-8 text-center text-accent"></i>
+              <span class="text-lg contact-link">421558027@qq.com / jianxiangyin802@gmail.com</span>
+            </div>
+          </div>
+        </div>
+        <!-- 右侧作品声明 -->
+        <div class="order-1 md:order-2">
+          <div class="declaration-box p-6 rounded-sm hover-lift h-full flex flex-col">
+            <div class="flex items-center mb-4">
+              <div class="copyright-icon w-12 h-12 bg-accent rounded-full flex items-center justify-center mr-4">
+                <i class="fa fa-copyright text-black text-xl"></i>
+              </div>
+              <h3 class="text-xl font-bold text-accent">版权声明</h3>
+            </div>
+            <div class="flex-grow">
+              <p class="text-gray-light text-sm leading-relaxed mb-4">
+          本网站视频作品的版权、著作权及相关知识产权均归本网站或对应创作者所有，未经本网站及相关权利人书面授权，任何单位或个人擅自下载、使用本网站视频作品的行为，均构成侵权。对于此类侵权行为，本网站将保留追究其全部法律责任的权利，包括但不限于要求停止侵权行为、消除影响、赔偿经济损失等。
+     
+              </p>
+              <p class="text-gray-light text-sm leading-relaxed mb-4">
+         感谢您对本网站商业运营及创作者知识产权的理解与尊重，如需合法使用相关视频内容，请通过本网站官方授权渠道联系洽谈合作事宜。
+              </p>
+              <div class="flex items-center mt-4 pt-4 border-t border-white border-opacity-10">
+                <i class="fa fa-shield text-accent mr-2"></i>
+                <span class="text-xs text-gray-light">本声明最终解释权归KORN所有</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 页脚 -->
+  <footer class="bg-gray-darker py-10 border-t border-gray-dark">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-6 md:mb-0">
+          <div class="flex items-center">
+            <img src="https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/logo/koutu_.png" alt="KORN" class="h-10 mr-4">
+            <div>
+              <h3 class="text-xl font-bold">殷健翔</h3>
+              <p class="text-gray-light text-sm">视频剪辑师 </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center mb-6 md:mb-0">
+          <p class="text-gray-light text-sm mb-2">© 2025 KORN. 保留所有权利</p>
+          <p class="text-gray-light text-xs">本网站所有内容受版权保护</p>
+        </div>
+        
+        <div class="flex space-x-6">
+          <a href="#contact" class="text-gray-light hover:text-accent transition-colors duration-300">
+            <i class="fa fa-weixin"></i>
+          </a>
+          <a href="#contact" class="text-gray-light hover:text-accent transition-colors duration-300">
+            <i class="fa fa-instagram"></i>
+          </a>
+          <a href="#contact" class="text-gray-light hover:text-accent transition-colors duration-300">
+            <i class="fa fa-envelope"></i>
+          </a>
+          <a href="#contact" class="text-gray-light hover:text-accent transition-colors duration-300">
+            <i class="fa fa-globe"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div class="mt-8 pt-8 border-t border-gray-dark text-center">
+        <p class="text-gray-light text-sm">创作不息，探索不止 | 用视觉讲述故事，用技术创造艺术</p>
+      </div>
+    </div>
+  </footer>
+  <!-- Video Player Modal -->
+  <div id="video-modal" class="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center hidden">
+    <button id="close-modal" class="absolute top-6 right-6 text-white text-2xl z-10 hover:text-accent transition-colors duration-300">
+      <i class="fa fa-times"></i>
+    </button>
+    <div class="w-full max-w-6xl px-4">
+      <div class="relative pb-[56.25%]">
+        <video id="modal-video" class="absolute inset-0 w-full h-full object-contain" controls="" playsinline="">
+          <source src="" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div id="video-info" class="mt-4">
+        <h3 id="video-title" class="text-xl font-bold"></h3>
+        <p id="video-meta" class="text-gray-light text-sm mt-1"></p>
+      </div>
+      <div id="related-videos" class="mt-8">
+        <h4 class="text-sm uppercase tracking-wider mb-4">相关作品</h4>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <!-- Related videos will be loaded here by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Image Modal - 修改：添加3D效果和文字介绍 -->
+  <div id="ai-image-modal" class="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center hidden">
+    <button id="close-ai-modal" class="absolute top-6 right-6 text-white text-2xl z-10 hover:text-accent transition-colors duration-300">
+      <i class="fa fa-times"></i>
+    </button>
+    <div class="w-full max-w-6xl px-4 flex flex-col md:flex-row gap-8">
+      <!-- 左侧文字介绍区域 -->
+      <div class="w-full md:w-1/3 flex flex-col justify-center">
+        <div id="ai-text-content" class="space-y-6 opacity-0 transform translate-x-10 transition-all duration-700">
+          <h2 id="ai-image-title" class="text-3xl font-bold text-gradient"></h2>
+          <p id="ai-image-meta" class="text-gray-light text-lg"></p>
+          <div class="h-px bg-gradient-to-r from-transparent via-accent to-transparent my-4"></div>
+          <div id="ai-description" class="text-gray-light space-y-4">
+            <p class="leading-relaxed"></p>
+            <p class="leading-relaxed"></p>
+            <div class="flex flex-wrap gap-2 mt-4">
+              <span class="px-3 py-1 bg-gray-dark text-xs rounded-full">AI生成</span>
+              <span class="px-3 py-1 bg-gray-dark text-xs rounded-full">数字艺术</span>
+              <span class="px-3 py-1 bg-gray-dark text-xs rounded-full">视觉设计</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 右侧图片区域 - 添加3D效果 -->
+      <div class="w-full md:w-2/3 flex items-center justify-center">
+        <div class="ai-3d-container relative w-full max-w-2xl">
+          <img id="modal-ai-image" src="" alt="" class="w-full h-auto max-h-[70vh] object-contain transition-all duration-300 rounded-lg">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const heroVideo = document.getElementById('hero-video');
+    const navbar = document.getElementById('navbar');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const worksGrid = document.getElementById('works-grid');
+    const aiWorksGrid = document.getElementById('ai-works-grid');
+    const videoModal = document.getElementById('video-modal');
+    const modalVideo = document.getElementById('modal-video');
+    const closeModal = document.getElementById('close-modal');
+    const videoTitle = document.getElementById('video-title');
+    const videoMeta = document.getElementById('video-meta');
+    const relatedVideos = document.getElementById('related-videos').querySelector('div');
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+    const searchResults = document.getElementById('search-results');
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    const contactItems = document.querySelectorAll('.contact-item');
+    const navLinks = document.querySelectorAll('.nav-link-advanced');
+    const aiImageModal = document.getElementById('ai-image-modal');
+    const modalAiImage = document.getElementById('modal-ai-image');
+    const closeAiModal = document.getElementById('close-ai-modal');
+    const aiImageTitle = document.getElementById('ai-image-title');
+    const aiImageMeta = document.getElementById('ai-image-meta');
+    const aiTextContent = document.getElementById('ai-text-content');
+    const loadMoreWorksBtn = document.getElementById('load-more-works');
+    const loadMoreAiBtn = document.getElementById('load-more-ai');
+    
+    // Data - 纯JS动态加载
+    const worksData = [
+      {
+            "id": 1,
+            "title": "欧洲媒体长安行",
+            "category": "汽车类",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E3%80%90%E6%AC%A7%E6%B4%B2%E5%AA%92%E4%BD%93%E9%95%BF%E5%AE%89%E8%A1%8C%E3%80%91%E9%87%87%E8%AE%BF%E4%BA%92%E5%8A%A8%E8%A7%86%E9%A2%91-%E6%A8%AA%E7%89%88%E5%B8%A6%E5%B0%81%E9%9D%A2.jpg",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E3%80%90%E6%AC%A7%E6%B4%B2%E5%AA%92%E4%BD%93%E9%95%BF%E5%AE%89%E8%A1%8C%E3%80%91%E9%87%87%E8%AE%BF%E4%BA%92%E5%8A%A8%E8%A7%86%E9%A2%91-%E6%A8%AA%E7%89%88%E5%B8%A6%E5%B0%81%E9%9D%A2.mp4",
+            "duration": "01:50",
+            "date": "2025.03",
+            "role": "剪辑",
+            "related": [2, 3]
+          },
+          {
+            "id": 2,
+            "title": "皮爷咖啡云南重山纪录片",
+            "category": "企业产品",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%B0%81%E9%9D%A2/%E7%9A%AE%E7%88%B7%E5%92%96%E5%95%A1%E4%BA%91%E5%8D%97%E9%87%8D%E5%B1%B1SOE%E5%92%96%E5%95%A1%E8%B1%86%E6%BA%AF%E6%BA%90%E7%BA%AA%E5%BD%95%E7%89%87-3min%E6%88%90%E7%89%87%E5%AE%9A%E7%A8%BF%281080p%E5%B0%8F%E6%A1%A3-super%E5%A4%A7%E5%AD%97%E5%8F%B7%E7%89%88%29-%E5%B0%81%E9%9D%A2.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E7%9A%AE%E7%88%B7%E5%92%96%E5%95%A1%E4%BA%91%E5%8D%97%E9%87%8D%E5%B1%B1SOE%E5%92%96%E5%95%A1%E8%B1%86%E6%BA%AF%E6%BA%90%E7%BA%AA%E5%BD%95%E7%89%87-1minV4.mp4",
+            "duration": "00:57",
+            "date": "2025.02",
+            "role": "剪辑",
+            "related": [1, 4]
+          },
+          {
+            "id": 3,
+            "title": "龙湖安缦高端美学会客厅",
+            "category": "地产类",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%88%BF%E5%9C%B0%E4%BA%A7/%E6%B1%9F%E5%B1%BF%E6%B5%B7%E6%A3%A0%E5%BB%B6%E6%97%B6.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%88%BF%E5%9C%B0%E4%BA%A7/%E9%BE%99%E6%B9%96%E5%AE%89%E7%BC%A6%E9%AB%98%E7%AB%AF%E7%BE%8E%E5%AD%A6%E4%BC%9A%E5%AE%A2%E5%8E%85.mp4",
+            "duration": "00:27",
+            "date": "2025.05",
+            "role": "剪辑",
+            "related": [4, 5]
+          },
+          {
+            "id": 4,
+            "title": "龙湖雕塑篇",
+            "category": "地产类",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%88%BF%E5%9C%B0%E4%BA%A7/%E6%B1%9F%E5%B1%BF%E6%B5%B7%E6%A3%A0%E8%88%AA%E6%8B%8D%E8%A7%86%E9%A2%91.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%88%BF%E5%9C%B0%E4%BA%A7/%E9%BE%99%E6%B9%96%E9%9B%95%E5%A1%91%E7%AF%87.mp4",
+            "duration": "00:25",
+            "date": "2025.05",
+            "role": "剪辑",
+            "related": [3, 6]
+          },
+          {
+            "id": 5,
+            "title": "猛士M817重庆活动",
+            "category": "活动快剪",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8C%9B%E5%A3%ABM817%E9%87%8D%E5%BA%86%E6%B4%BB%E5%8A%A8%E5%B0%81%E9%9D%A2.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8C%9B%E5%A3%ABM817%E9%87%8D%E5%BA%86%E6%B4%BB%E5%8A%A8%E8%A7%86%E9%A2%91.mp4",
+            "duration": "00:43",
+            "date": "2025.07",
+            "role": "剪辑",
+            "related": [6, 7,8]
+          },
+          {
+            "id": 6,
+            "title": "猛士M817重庆到成都活动",
+            "category": "活动快剪",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8C%9B%E5%A3%ABM817%E9%87%8D%E5%BA%86%E5%88%B0%E6%88%90%E9%83%BD%E6%B4%BB%E5%8A%A8%E5%B0%81%E9%9D%A2.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8C%9B%E5%A3%ABM817%E9%87%8D%E5%BA%86%E5%88%B0%E6%88%90%E9%83%BD%E6%B4%BB%E5%8A%A8%E8%A7%86%E9%A2%91.mp4",
+            "duration": "00:52",
+            "date": "2025.07",
+            "role": "剪辑",
+            "related": [5, 7,8]
+          },
+          {
+            "id": 7,
+            "title": "猛士M817成都到川西活动",
+            "category": "活动快剪",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8C%9B%E5%A3%ABM817%E6%88%90%E9%83%BD%E5%88%B0%E5%B7%9D%E8%A5%BF%E6%B4%BB%E5%8A%A8%E5%B0%81%E9%9D%A2.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8C%9B%E5%A3%ABM817%E6%88%90%E9%83%BD%E5%88%B0%E5%B7%9D%E8%A5%BF%E6%B4%BB%E5%8A%A8%E8%A7%86%E9%A2%91.mp4",
+            "duration": "00:52",
+            "date": "2025.07",
+            "role": "剪辑",
+            "related": [6, 5,8]
+          },
+          {
+            "id": 8,
+            "title": "猛士M817媒体证言",
+            "category": "活动快剪",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E5%AA%92%E4%BD%93%E8%AF%81%E8%A8%80%E5%B0%81%E9%9D%A2.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E5%AA%92%E4%BD%93%E8%AF%81%E8%A8%80-1080p.mp4",
+            "duration": "04:27",
+            "date": "2025.07",
+            "role": "剪辑",
+            "related": [6, 7,5]
+          },  
+    	  {
+            "id": 30,
+            "title": "猛士M817-hero版媒体证言",
+            "category": "活动快剪",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8C%9B%E5%A3%ABM817-hero%E7%89%88%E5%AA%92%E4%BD%93%E8%AF%81%E8%A8%80%E5%B0%81%E9%9D%A2.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8C%9B%E5%A3%ABM817-hero%E7%89%88%E5%AA%92%E4%BD%93%E8%AF%81%E8%A8%80%281080P%29.mp4",
+            "duration": "04:30",
+            "date": "2025.10",
+            "role": "剪辑",
+            "related": [31]
+          },
+    	  {
+            "id": 31,
+            "title": "猛士M817-hero版安徽活动",
+            "category": "活动快剪",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8C%9B%E5%A3%ABM817-hero%E7%89%88%E5%B0%81%E9%9D%A2.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%20%E7%8C%9B%E5%A3%ABM817-hero%E7%89%88%281080P%29.mp4",
+            "duration": "01:32",
+            "date": "2025.10",
+            "role": "剪辑",
+            "related": [30]
+          },
+          {
+            "id": 9,
+            "title": "捷途G700迪拜全球媒体证言",
+            "category": "活动快剪",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E5%85%A8%E7%90%83%E5%AA%92%E4%BD%93%E8%AF%81%E8%A8%80-%E6%B5%B7%E5%A4%96%E7%BA%AF%E5%87%80%E7%89%88%E6%9C%AC.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E5%85%A8%E7%90%83%E5%AA%92%E4%BD%93%E8%AF%81%E8%A8%80-%E6%B5%B7%E5%A4%96%E7%89%88.mp4",
+            "duration": "01:26",
+            "date": "2025.09",
+            "role": "剪辑",
+            "related": [11, 10]
+          },
+          {
+            "id": 10,
+            "title": "捷途G700迪拜活动回顾",
+            "category": "活动快剪",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E6%B4%BB%E5%8A%A8%E5%9B%9E%E9%A1%BE-%E6%B5%B7%E5%A4%96%E7%89%88.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E6%B4%BB%E5%8A%A8%E5%9B%9E%E9%A1%BE-%E6%B5%B7%E5%A4%96%E7%89%88.mp4",
+            "duration": "00:55",
+            "date": "2025.09",
+            "role": "剪辑",
+            "related": [9,11]
+          },
+          {
+            "id": 11,
+            "title": "捷途G700迪拜现场嘉宾品鉴",
+            "category": "活动快剪",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8E%B0%E5%9C%BA%E5%98%89%E5%AE%BE%E5%93%81%E9%89%B4-%E6%B5%B7%E5%A4%96%E7%89%88.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E7%8E%B0%E5%9C%BA%E5%98%89%E5%AE%BE%E5%93%81%E9%89%B4-%E6%B5%B7%E5%A4%96%E7%89%88.mp4",
+            "duration": "00:48",
+            "date": "2025.09",
+            "role": "剪辑",
+            "related": [9, 10]
+          },
+          {
+            "id": 12,
+            "title": "长安汽车经销商暖场视频",
+            "category": "企业产品",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E6%9A%96%E5%9C%BA%E5%B0%81%E9%9D%A2.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E6%9A%96%E5%9C%BA%E8%A7%86%E9%A2%91-%E6%88%90%E5%93%81.mp4",
+            "duration": "04:26",
+            "date": "2024.12",
+            "role": "剪辑/配乐",
+            "related": [13]
+          },
+          {
+            "id": 13,
+            "title": "长安汽车赵非总入驻视频",
+            "category":"企业产品",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E9%95%BF%E5%AE%89%E8%B5%B5%E9%9D%9E%E6%80%BB%E5%85%A5%E9%A9%BB%E8%A7%86%E9%A2%91.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E9%95%BF%E5%AE%89%E8%B5%B5%E9%9D%9E%E6%80%BB%E5%85%A5%E9%A9%BB%E8%A7%86%E9%A2%91.mp4",
+            "duration": "01:08",
+            "date": "2025.10",
+            "role": "剪辑/包装",
+            "related": [12]
+          }, 
+    	  {
+            "id": 20,
+            "title": "UTV消防车调性视频",
+            "category":"企业产品",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/UTV%E6%B6%88%E9%98%B2%E8%BD%A6%E8%B0%83%E6%80%A7%E8%A7%86%E9%A2%91%E5%B0%81%E9%9D%A2.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/UTV%E6%B6%88%E9%98%B2%E8%BD%A6%E8%B0%83%E6%80%A7%E8%A7%86%E9%A2%91-1080P%E6%9C%89%E5%AD%97%E5%B9%95.mp4",
+            "duration": "02:02",
+            "date": "2025.12",
+            "role": "剪辑",
+            "related": []
+          },
+    	  {
+    	    "id": 21,
+    	    "title": "秦家保",
+    	    "category":"企业产品",
+    	    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%9B%BE%E7%89%872.png",
+    	    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E7%A7%A6%E5%AE%B6%E4%BF%9D.mp4",
+    	    "duration": "03:09",
+    	    "date": "2025.10",
+    	    "role": "剪辑",
+    	    "related": []
+    	  },  
+    	  {
+    	    "id": 32,
+    	    "title": "建行2025旺季营销视频",
+    	    "category":"企业产品",
+    	    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%BB%BA%E8%AE%BE%E9%93%B6%E8%A1%8C%E5%B9%B4%E4%BC%9A.png",
+    	    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%BB%BA%E8%A1%8C2025%E6%97%BA%E5%AD%A3%E8%90%A5%E9%94%80%E8%A7%86%E9%A2%91%E5%88%B6%E4%BD%9C-1080p.mp4",
+    	    "duration": "15:51",
+    	    "date": "2025.11",
+    	    "role": "剪辑",
+    	    "related": []
+    	  },
+          {
+            "id": 14,
+            "title": "长安汽车-初三(守家中)",
+            "category": "AIGC",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%B0%81%E9%9D%A2/%E5%88%9D%E4%B8%89.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%88%9D%E4%B8%89_%E5%AE%88%E5%AE%B6%E4%B8%AD.mp4",
+            "duration": "00:32",
+            "date": "2025.02",
+            "role": "剪辑/AI视觉",
+            "related": [15,16,17]
+          },
+          {
+            "id": 15,
+            "title": "长安汽车-初五(财神到)",
+            "category": "AIGC",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%B0%81%E9%9D%A2/%E5%88%9D%E4%BA%94.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%88%9D%E4%BA%94_%E8%B4%A2%E7%A5%9E%E5%88%B0.mp4",
+            "duration": "00:32",
+            "date": "2025.02",
+            "role": "剪辑/AI视觉",
+            "related": [14,16,17]
+          },
+          {
+            "id": 16,
+            "title": "长安汽车-初八(开工大吉)",
+            "category": "AIGC",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%B0%81%E9%9D%A2/%E5%88%9D%E5%85%AB.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%88%9D%E5%85%AB_%E5%BC%80%E5%B7%A5%E5%A4%A7%E5%90%89.mp4",
+            "duration": "00:36",
+            "date": "2025.02",
+            "role": "剪辑/AI视觉",
+            "related": [14,15,17]
+          },
+          {
+            "id": 17,
+            "title": "长安汽车-元宵佳节",
+            "category": "AIGC",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%B0%81%E9%9D%A2/%E5%85%83%E5%AE%B5%E4%BD%B3%E8%8A%82%E2%80%94%E5%B0%81%E9%9D%A2.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/%E5%85%83%E5%AE%B5%E4%BD%B3%E8%8A%82-%E6%88%90%E5%93%81.mp4",
+            "duration": "00:38",
+            "date": "2025.02",
+            "role": "音效设计/AI视觉",
+            "related": [14,15,16]
+          },  
+		  {
+		    "id": 50,
+		    "title": "四川网络春晚-醉巴蜀背景视频",
+		    "category": "AIGC",
+		    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E9%86%89%E5%B7%B4%E8%9C%80.png",
+		    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E9%86%89%E5%B7%B4%E8%9C%80.mp4",
+		    "duration": "07:34",
+		    "date": "2026.02",
+		    "role": "AI视觉/美术",
+		    "related": []
+		  },  
+		  {
+		    "id": 51,
+		    "title": "四川网络春晚-《暖冬》小品场景视频搭建",
+		    "category": "AIGC",
+		    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E6%9A%96%E5%86%AC.png",
+		    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E6%9A%96%E5%86%AC.mp4",
+		    "duration": "00:00",
+		    "date": "2026.02",
+		    "role": "AI视觉/美术",
+		    "related": []
+		  },  
+		  {
+		    "id": 56,
+		    "title": "比亚迪第二代刀片电池-电池针刺实验",
+		    "category":"企业产品",
+		    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/500%E6%AC%A1%E5%BE%AA%E7%8E%AF%E5%90%8E%E8%BE%B9%E9%97%AA%E5%85%85%E8%BE%B9%E9%92%88%E5%88%BA%E8%AF%95%E9%AA%8C%E5%B0%81%E9%9D%A2-%E5%BE%AE%E4%BF%A1%E8%A7%86%E9%A2%91%E5%8F%B7%E6%A8%AA%E7%89%88%E5%B0%81%E9%9D%A2.png",
+		    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E5%AE%A3%E4%BC%A0%E7%89%87/500%E6%AC%A1%E5%BE%AA%E7%8E%AF%E5%90%8E%E8%BE%B9%E9%97%AA%E5%85%85%E8%BE%B9%E9%92%88%E5%88%BA%E8%AF%95%E9%AA%8C-1080p.mp4",
+		    "duration": "03:06",
+		    "date": "2026.3",
+		    "role": "剪辑",
+		    "related": []
+		  },  
+		  {
+		    "id": 40,
+		    "title": "星光560重庆小牛顶路跑视频",
+		    "category": "汽车类",
+		    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/%E5%B0%8F%E7%89%9B%E9%A1%B6%E4%BA%91%E5%BD%92%E5%B1%B1%E8%A7%86%E9%A2%91%E5%B0%81%E9%9D%A2-3.png",
+		    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/%E5%B0%8F%E7%89%9B%E9%A1%B6%E4%BA%91%E5%BD%92%E5%B1%B1%E8%A7%86%E9%A2%91-1080p.mp4",
+		    "duration": "0:39",
+		    "date": "2026.01",
+		    "role": "剪辑",
+		    "related": [41,42,43]
+		  }, 
+		  {
+		    "id": 41,
+		    "title": "星光560重庆雪林路跑视频",
+		    "category": "汽车类",
+		    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/%E6%A3%AE%E6%9E%97%E9%9B%AA%E6%99%AF%E8%A7%86%E9%A2%91%E5%B0%81%E9%9D%A2-1.png",
+		    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/%E6%A3%AE%E6%9E%97%E9%9B%AA%E6%99%AF%E8%A7%86%E9%A2%91-1080p.mp4",
+		    "duration": "00:38",
+		    "date": "2026.01",
+		    "role": "剪辑",
+		    "related": [42,40,44]
+		  },   
+		  {
+		    "id": 42,
+		    "title": "星光560重庆羊角古镇路跑视频",
+		    "category": "汽车类",
+		    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/%E7%BE%8A%E8%A7%92%E5%8F%A4%E9%95%87%E8%A7%86%E9%A2%91%E5%B0%81%E9%9D%A2-1.png",
+		    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/%E7%BE%8A%E8%A7%92%E5%8F%A4%E9%95%87%E8%A7%86%E9%A2%91-1080P.mp4",
+		    "duration": "00:41",
+		    "date": "2026.01",
+		    "role": "剪辑",
+		    "related": [43,41,44]
+		  },   
+		  {
+		    "id": 43,
+		    "title": "星光560重庆金山湖路跑视频",
+		    "category": "汽车类",
+		    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/%E9%87%91%E5%B1%B1%E6%B9%96%E8%A7%86%E9%A2%91%E5%B0%81%E9%9D%A2-1.png",
+		    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/%E9%87%91%E5%B1%B1%E6%B9%96%E8%A7%86%E9%A2%91-1080P.mp4",
+		    "duration": "00:38",
+		    "date": "2026.01",
+		    "role": "剪辑",
+		    "related": [44,42.41]
+		  },   
+		  {
+		    "id": 44,
+		    "title": "星光560重庆森林路跑视频",
+		    "category": "汽车类",
+		    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/%E6%A3%AE%E6%9E%97%E8%B7%AF%E8%B7%91%E8%A7%86%E9%A2%91%E5%B0%81%E9%9D%A2-2.png",
+		    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B1%BD%E8%BD%A6/%E6%A3%AE%E6%9E%97%E8%B7%AF%E8%B7%91%E8%A7%86%E9%A2%91-1080P.mp4",
+		    "duration": "00:42",
+		    "date": "2026.01",
+		    "role": "剪辑",
+		    "related": [40,42,43]
+		  }, 
+    	  {
+            "id": 27,
+            "title": "仲景养生经系列-1",
+            "category": "AIGC",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E5%85%BB%E7%94%9F%E5%B0%81%E9%9D%A21.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E4%BB%B2%E6%99%AF%E5%85%BB%E7%94%9F%E7%BB%8F-1.mp4",
+            "duration": "01:09",
+            "date": "2025.08",
+            "role": "剪辑/AI视觉/视频包装",
+            "related": [28,29]
+          }, 
+    	  {
+            "id": 28,
+            "title": "仲景养生经系列-2",
+            "category": "AIGC",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E5%85%BB%E7%94%9F%E5%B0%81%E9%9D%A22.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E4%BB%B2%E6%99%AF%E5%85%BB%E7%94%9F%E7%BB%8F-2.mp4",
+            "duration": "01:09",
+            "date": "2025.08",
+            "role": "剪辑/AI视觉/视频包装",
+            "related": [27,29]
+          },
+    	  {
+    	    "id": 29,
+    	    "title": "仲景养生经系列-3",
+    	    "category": "AIGC",
+    	    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E5%85%BB%E7%94%9F%E5%B0%81%E9%9D%A23.png",
+    	    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E4%BB%B2%E6%99%AF%E5%85%BB%E7%94%9F%E7%BB%8F-3.mp4",
+    	    "duration": "00:58",
+    	    "date": "2025.08",
+    	    "role": "剪辑/AI视觉/视频包装",
+    	    "related": [27,28]
+    	  },
+    	  {
+    	    "id": 23,
+    	    "title": "小溪数字人舞蹈",
+    	    "category": "AIGC",
+    	    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E6%95%B0%E5%AD%97%E4%BA%BA.png",
+    	    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/1%E6%9C%887%E6%97%A5%281%29.MP4",
+    	    "duration": "00:14",
+    	    "date": "2026.01",
+    	    "role": "AI视觉",
+    	    "related": [24,25,26]
+    	  },
+    	  {
+    	    "id": 24,
+    	    "title": "小溪数字人舞蹈",
+    	    "category": "AIGC",
+    	    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%F0%9F%86%85%E6%88%90%E6%9E%9C%E5%9B%BE-1768192161133.png",
+    	    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/kling_20260107_%E5%8A%A8%E4%BD%9C%E6%8E%A7%E5%88%B6_%E5%A5%B3%E5%AD%90%E8%B7%B3%E8%88%9E_%E7%9C%BC%E7%A5%9E%E7%9B%AF%E7%9D%80%E9%95%9C_4686_0.MP4",
+    	    "duration": "00:11",
+    	    "date": "2026.01",
+    	    "role": "AI视觉",
+    	    "related": [23,25,26]
+    	  },
+    	  {
+    	    "id": 25,
+    	    "title": "小溪数字人舞蹈",
+    	    "category": "AIGC",
+    	    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%F0%9F%86%85%E6%88%90%E6%9E%9C%E5%9B%BE-1768192161133.png",
+    	    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%E6%8A%96%E8%88%9E1.MP4",
+    	    "duration": "00:09",
+    	    "date": "2026.01",
+    	    "role": "AI视觉",
+    	    "related": [23,24,26]
+    	  },
+    	  {
+    	    "id": 26,
+    	    "title": "小溪数字人舞蹈",
+    	    "category": "AIGC",
+    	    "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/%F0%9F%86%85%E6%88%90%E6%9E%9C%E5%9B%BE-1768192375285.png",
+    	    "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/aigc/kling_20260112_%E5%8A%A8%E4%BD%9C%E6%8E%A7%E5%88%B6__3237_0.mp4",
+    	    "duration": "00:04",
+    	    "date": "2026.01",
+    	    "role": "AI视觉",
+    	    "related": [23,24,25]
+    	  },
+          {
+            "id": 18,
+            "title": "龙湖圣诞demo",
+            "category": "活动快剪",
+            "cover": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E9%BE%99%E6%B9%96%E6%8B%9B%E6%A0%8716.png",
+            "video": "https://boyivideo-1.oss-cn-chengdu.aliyuncs.com/%E6%B4%BB%E5%8A%A8/%E9%BE%99%E6%B9%96%E6%8B%9B%E6%A0%87.mp4",
+            "duration": "00:38",
+            "date": "2025.04",
+            "role": "剪辑",
+            "related": []
+          }
+    ];
+
+    const aiWorksData = [
+        {
+           "id": 1,
+           "title": "动漫人物",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/181a1b29-ee85-4952-915e-73b768fc05ab/0_2.png",
+           "created": "MJ V6.1 / 2025.05"
+         },
+         {
+           "id": 2,
+           "title": "数字艺术人像",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/0e3f7d8f-cea2-47f4-9041-433c5a6c5b09/0_1.png",
+           "created": "MJ V6.1 / 2025.04"
+         },
+         {
+           "id": 3,
+           "title": "3D 人像",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/39b11809-8921-46c1-bb79-1dea82578210/0_2.png",
+           "created": "MJ V6.1 / 2025.03"
+         },
+         {
+           "id": 4,
+           "title": "抽象几何构图",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/fcf1ae1d-f9c7-4cff-94f4-c0127bd32473/0_1.png",
+           "created": "MJ V6.1 / 2025.03"
+         },
+         {
+           "id": 5,
+           "title": "骑士",
+           "aspectRatio": "16:9",
+           "image": "https://cdn.midjourney.com/6aad353a-58fe-4742-aca1-23486187eff5/0_1.png",
+           "created": "MJ V5.2 / 2025.02"
+         },
+         {
+           "id": 6,
+           "title": "高达",
+           "aspectRatio": "16:9",
+           "image": "https://cdn.midjourney.com/5d8f9a20-de54-4bb7-a505-15104d521d99/0_1.png",
+           "created": "MJ V6.1 / 2025.02"
+         },
+         {
+           "id": 7,
+           "title": "财神",
+           "aspectRatio": "16:9",
+           "image": "https://cdn.midjourney.com/b7a8bf30-c1b1-49f6-9ef9-15b3c90d83c0/0_3.png",
+           "created": "MJ V6.1 / 2025.01"
+         },
+         {
+           "id": 8,
+           "title": "老虎机",
+           "aspectRatio": "16:9",
+           "image": "https://cdn.midjourney.com/0409de54-0bc5-4e2b-9812-e7f428d2a36b/0_3.png",
+           "created": "MJ V6.1 / 2025.01"
+         },
+         {
+           "id": 9,
+           "title": "赛璐璐风格",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/4e1a1fc7-1fc5-4353-9373-9936767d8eff/0_1.png",
+           "created": "MJ V6.1 / 2024.12"
+         },
+         {
+           "id": 10,
+           "title": "赛璐璐风格插画",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/75c0deb0-6ee2-41e1-a955-29e3571db615/0_2.png",
+           "created": "MJ V5.1 / 2024.12"
+         },
+         {
+           "id": 11,
+           "title": "复古未来主义",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/9ee7e7bc-0b78-4061-a691-01e1eb345aeb/0_0.png",
+           "created": "MJ V6.1 / 2024.11"
+         },
+         {
+           "id": 12,
+           "title": "动漫海报",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/66322156-0cef-4f97-a30a-45520b704600/0_0.png",
+           "created": "MJ V6.1 / 2024.11"
+         },
+         {
+           "id": 13,
+           "title": "赛博城市",
+           "aspectRatio": "16:9",
+           "image": "https://cdn.midjourney.com/3d98a6b7-95cf-43dc-8541-85a41f0ad2d5/0_3.png",
+           "created": "MJ V6.1 / 2024.10"
+         },
+         {
+           "id": 14,
+           "title": "海报",
+           "aspectRatio": "16:9",
+           "image": "https://cdn.midjourney.com/de720362-b08e-4edd-9cc3-f119ea4837b0/0_1.png",
+           "created": "SD XL / 2024.10"
+         },
+         {
+           "id": 15,
+           "title": "人像摄影",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/ca845b8a-cc24-4db2-b93a-81c6d7230240/0_1.png",
+           "created": "MJ V7 / 2025.05"
+         },
+         {
+           "id": 16,
+           "title": "水下摄影",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/bfd58bd9-0bdd-47c0-8117-ab2d42ad3ab2/0_0.png",
+           "created": "MJ V7 / 2025.06"
+         },
+         {
+           "id": 17,
+           "title": "艺术摄影",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/75c0392d-14d3-47e3-a7f9-703db8c5bc77/0_0.png",
+           "created": "MJ V7 / 2025.04"
+         },
+         {
+           "id": 18,
+           "title": "复古",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/15c60f3a-9ec5-4745-88e7-0696501a6a5a/0_2.png",
+           "created": "MJ V7 / 2025.05"
+         },
+         {
+           "id": 19,
+           "title": "3D拟人",
+           "aspectRatio": "16:9",
+           "image": "https://cdn.midjourney.com/8a5e6e4e-c61d-4678-98c0-625b4f091128/0_1.png",
+           "created": "MJ V6.1 / 2024.07"
+         },
+         {
+           "id": 20,
+           "title": "机械师",
+           "aspectRatio": "16:9",
+           "image": "https://cdn.midjourney.com/b7808865-c170-4ae2-a6df-9bde663988d4/0_3.png",
+           "created": "MJ V6.1 / 2024.07"
+         },
+         {
+           "id": 21,
+           "title": "意识流",
+           "aspectRatio": "16:9",
+           "image": "https://cdn.midjourney.com/8a6f2df7-0611-461c-8e86-ed20228f469c/0_0.png",
+           "created": "MJ V7 / 2025.04"
+         },
+         {
+           "id": 22,
+           "title": "外星来客",
+           "aspectRatio": "16:9",
+           "image": "https://cdn.midjourney.com/ead13a5d-3d5a-41d5-9df8-290fd0d04137/0_0.png",
+           "created": "MJ V7 / 2025.05"
+         },
+         {
+           "id": 23,
+           "title": "未来科技",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/26f1c9a9-be5f-4a97-bc41-8c1180879760/0_0.png",
+           "created": "MJ V7 / 2025.06"
+         },
+         {
+           "id": 24,
+           "title": "电商产品",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/7def2d57-fcd9-4bbb-bb02-b4f29c6931ee/0_0.png",
+           "created": "MJ V7 / 2025.06"
+         },
+         {
+           "id": 25,
+           "title": "超现实建筑",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/62cc1c11-a28b-494c-88f1-fd332882bfca/0_0.png",
+           "created": "MJ V7 / 2025.06"
+         },
+         {
+           "id": 27,
+           "title": "灵眸",
+           "aspectRatio": "9:16",
+           "image": "https://cdn.midjourney.com/74590c19-10c0-4c4a-9710-536fe30c3aea/0_0.png",
+           "created": "MJ V7 / 2025.06"
+         }
+    ];
+
+    let currentCategory = 'all';
+    let worksVisible = 6; // 初始显示6个视频作品
+    let aiWorksVisible = 12; // 初始显示8个AI作品
+    let currentFilteredWorks = []; // 当前筛选后的作品
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Render data
+      currentFilteredWorks = worksData;
+      renderWorks(currentFilteredWorks.slice(0, worksVisible));
+      renderAIWorks(aiWorksData.slice(0, aiWorksVisible));
+      
+      // Initialize animations
+      initAnimations();
+      
+      // Initialize event listeners
+      initEventListeners();
+      
+      // 初始化关于我板块的工具项样式
+      initAboutSection();
+      
+      // 初始化时间线动画
+      initTimelineAnimation();
+    });
+    
+    // 初始化时间线动画
+    function initTimelineAnimation() {
+      const timelineItems = document.querySelectorAll('.timeline-item');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          }
+        });
+      }, { threshold: 0.2 });
+      
+      timelineItems.forEach((item) => {
+        observer.observe(item);
+      });
+    }
+    
+    // 初始化关于我板块
+    function initAboutSection() {
+      const toolItems = document.querySelectorAll('.tool-item');
+      toolItems.forEach(item => {
+        item.style.opacity = '0';
+        item.style.transform = 'scale(0.9)';
+        item.style.transition = 'all 0.4s ease';
+      });
+    }
+    
+    // Render Works - 修改：信息在封面图下方显示
+    function renderWorks(works) {
+      worksGrid.innerHTML = '';
+      
+      works.forEach((work, index) => {
+        const workCard = document.createElement('div');
+        workCard.className = 'work-card group animate-blur-in hover-lift glass-effect cursor-pointer relative overflow-hidden';
+        workCard.style.animationDelay = `${index * 0.1}s`;
+        workCard.setAttribute('data-category', work.category);
+        
+        workCard.innerHTML = `
+          <div class="relative overflow-hidden aspect-video">
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 z-10"></div>
+            <img src="${work.cover}" alt="${work.title}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+            <!-- 播放按钮 -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+              <div class="w-16 h-16 bg-white bg-opacity-80 rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                <i class="fa fa-play text-black text-xl ml-1"></i>
+              </div>
+            </div>
+            <!-- 信息区域 - 修改：放在封面图左下角和右下角 -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent z-30">
+              <div class="flex justify-between items-center">
+                <h3 class="work-title font-bold text-white text-sm md:text-base">${work.title}</h3>
+                <div class="work-meta flex items-center text-white">
+                  <i class="fa fa-clock-o mr-1 text-xs"></i>
+                  <span class="text-xs">${work.duration}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        workCard.addEventListener('click', () => openVideoModal(work));
+        worksGrid.appendChild(workCard);
+      });
+      
+      // 更新加载更多按钮状态
+      updateLoadMoreButton();
+    }
+    
+    // 更新加载更多按钮状态
+    function updateLoadMoreButton() {
+      if (currentFilteredWorks.length <= worksVisible) {
+        loadMoreWorksBtn.style.display = 'none';
+      } else {
+        loadMoreWorksBtn.style.display = 'block';
+      }
+    }
+    
+    // Render AI Works - 修改：添加放大镜效果
+    function renderAIWorks(works) {
+      aiWorksGrid.innerHTML = '';
+      
+      works.forEach((work, index) => {
+        const workCard = document.createElement('div');
+        workCard.className = 'ai-work-card group relative overflow-hidden animate-scale-in hover-lift glass-effect cursor-pointer magnifier-container';
+        workCard.style.animationDelay = `${index * 0.1}s`;
+        
+        // 根据宽高比设置不同的样式
+        if (work.aspectRatio === "16:9") {
+          workCard.classList.add('aspect-video', 'md:col-span-2', 'md:row-span-2');
+        } else {
+          workCard.classList.add('aspect-[9/16]', 'md:col-span-1', 'md:row-span-1');
+        }
+        
+        workCard.innerHTML = `
+          <img src="${work.image}" alt="${work.title}" class="w-full h-full object-cover">
+          <!-- 放大镜效果 -->
+          <div class="magnifier-lens">
+            <img src="${work.image}" alt="${work.title}">
+          </div>
+          <!-- 信息区域 -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+            <div>
+              <h3 class="text-lg font-bold">${work.title}</h3>
+              <p class="text-xs text-gray-light mt-1">${work.created}</p>
+            </div>
+          </div>
+        `;
+        
+        // 添加放大镜交互
+        initMagnifier(workCard);
+        
+        workCard.addEventListener('click', () => openAIImageModal(work));
+        aiWorksGrid.appendChild(workCard);
+      });
+      
+      // 更新AI加载更多按钮状态
+      if (aiWorksVisible >= aiWorksData.length) {
+        loadMoreAiBtn.style.display = 'none';
+      } else {
+        loadMoreAiBtn.style.display = 'block';
+      }
+    }
+    
+    // 初始化放大镜效果 - 修改版：在圆形放大镜内直接放大
+    function initMagnifier(container) {
+      const img = container.querySelector('img');
+      const lens = container.querySelector('.magnifier-lens');
+      const lensImg = lens.querySelector('img');
+      
+      // 计算放大比例
+      const zoomLevel = 1.4;
+      
+      // 鼠标进入容器时显示放大镜
+      container.addEventListener('mouseenter', () => {
+        lens.classList.add('active');
+      });
+      
+      // 鼠标离开容器时隐藏放大镜
+      container.addEventListener('mouseleave', () => {
+        lens.classList.remove('active');
+      });
+      
+      // 鼠标在容器内移动时更新放大镜位置和内容
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // 限制放大镜在容器内
+        const lensSize = 150;
+        const maxX = rect.width - lensSize;
+        const maxY = rect.height - lensSize;
+        
+        let lensX = x - lensSize / 2;
+        let lensY = y - lensSize / 2;
+        
+        // 边界检查
+        lensX = Math.max(0, Math.min(lensX, maxX));
+        lensY = Math.max(0, Math.min(lensY, maxY));
+        
+        // 更新放大镜位置
+        lens.style.left = `${lensX}px`;
+        lens.style.top = `${lensY}px`;
+        
+        // 计算放大图片的位置
+        const bgX = (x / rect.width) * 100;
+        const bgY = (y / rect.height) * 100;
+        
+        // 更新放大图片的位置和缩放
+        lensImg.style.transform = `scale(${zoomLevel}) translate(${-bgX}%, ${-bgY}%)`;
+      });
+    }
+    
+    // Open Video Modal
+    function openVideoModal(work) {
+      modalVideo.src = work.video;
+      videoTitle.textContent = work.title;
+      videoMeta.textContent = `${work.duration} • ${work.date} • ${work.role}`;
+      
+      // Load related videos
+      relatedVideos.innerHTML = '';
+      work.related.forEach(relatedId => {
+        const relatedWork = worksData.find(w => w.id === relatedId);
+        if (relatedWork) {
+          const relatedVideo = document.createElement('div');
+          relatedVideo.className = 'related-video cursor-pointer animate-scale-in glass-effect p-2 rounded-sm hover-lift';
+          relatedVideo.innerHTML = `
+            <img src="${relatedWork.cover}" alt="${relatedWork.title}" class="w-full aspect-video object-cover">
+            <p class="text-xs mt-1">${relatedWork.title}</p>
+          `;
+          relatedVideo.addEventListener('click', () => {
+            modalVideo.src = relatedWork.video;
+            videoTitle.textContent = relatedWork.title;
+            videoMeta.textContent = `${relatedWork.duration} • ${work.date} • ${work.role}`;
+            modalVideo.play();
+          });
+          relatedVideos.appendChild(relatedVideo);
+        }
+      });
+      
+      videoModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      modalVideo.play();
+    }
+    
+    // Open AI Image Modal - 修改：添加3D效果和文字介绍
+    function openAIImageModal(work) {
+      modalAiImage.src = work.image;
+      aiImageTitle.textContent = work.title;
+      aiImageMeta.textContent = work.created;
+      
+      // 重置文字内容动画
+      aiTextContent.style.opacity = '0';
+      aiTextContent.style.transform = 'translateX(10px)';
+      
+      aiImageModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      
+      // 延迟显示文字内容动画
+      setTimeout(() => {
+        aiTextContent.style.opacity = '1';
+        aiTextContent.style.transform = 'translateX(0)';
+      }, 300);
+      
+      // 添加3D鼠标控制效果
+      init3DEffect();
+    }
+    
+    // 初始化3D鼠标控制效果
+    function init3DEffect() {
+      const aiImage = document.getElementById('modal-ai-image');
+      const container = aiImage.parentElement;
+      
+      // 鼠标移动时的3D效果
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateY = (x - centerX) / 20;
+        const rotateX = (centerY - y) / 20;
+        
+        aiImage.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+        aiImage.style.transition = 'transform 0.1s ease';
+      });
+      
+      // 鼠标离开时恢复原状
+      container.addEventListener('mouseleave', () => {
+        aiImage.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        aiImage.style.transition = 'transform 0.5s ease';
+      });
+    }
+    
+    // Initialize Animations
+    function initAnimations() {
+      // Hero video animation
+      setTimeout(() => {
+        heroVideo.style.opacity = '1';
+        heroVideo.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+        heroVideo.style.transform = 'scale(1.05)';
+        
+        setTimeout(() => {
+          heroVideo.style.transform = 'scale(1)';
+        }, 800);
+        
+        heroVideo.play();
+      }, 500);
+      
+      // Intersection Observer for scroll animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // 为不同部分应用不同的动画
+            if (entry.target.id === 'works') {
+              entry.target.classList.add('animate-slide-up-blur');
+              entry.target.querySelectorAll('.work-card').forEach((card, index) => {
+                setTimeout(() => {
+                  card.classList.add('animate-blur-in');
+                }, index * 100);
+              });
+            } else if (entry.target.id === 'ai-gallery') {
+              entry.target.classList.add('animate-zoom-blur');
+              entry.target.querySelectorAll('.ai-work-card').forEach((card, index) => {
+                setTimeout(() => {
+                  card.classList.add('animate-scale-in');
+                }, index * 100);
+              });
+            } else if (entry.target.id === 'about') {
+              // 关于我板块动画
+              entry.target.classList.add('animate-slide-right-blur');
+              
+              // 为技能项添加顺序动画
+              const skillItems = entry.target.querySelectorAll('.skill-item');
+              skillItems.forEach((item, index) => {
+                setTimeout(() => {
+                  item.classList.add('is-visible');
+                }, index * 150);
+              });
+              
+              // 为工具项添加动画
+              const toolItems = entry.target.querySelectorAll('.tool-item');
+              toolItems.forEach((item, index) => {
+                setTimeout(() => {
+                  item.style.opacity = '1';
+                  item.style.transform = 'scale(1)';
+                }, 500 + index * 50);
+              });
+            } else if (entry.target.id === 'contact') {
+              entry.target.classList.add('animate-slide-right-blur');
+              entry.target.querySelectorAll('.contact-item').forEach((item, index) => {
+                setTimeout(() => {
+                  item.classList.add('animate-slide-up');
+                }, index * 100);
+              });
+            }
+          }
+        });
+      }, { threshold: 0.15 });
+      
+      // Observe sections
+      document.querySelectorAll('section').forEach(section => {
+        observer.observe(section);
+      });
+      
+      // 原有的淡入观察者
+      const observeFade = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          }
+        });
+      }, { threshold: 0.12 });
+      
+      document.querySelectorAll('.fade-in, .hero-section, section, .project-item')
+        .forEach(el => observeFade.observe(el));
+    }
+    
+    // Initialize Event Listeners
+    function initEventListeners() {
+      // Scroll event for navbar
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          navbar.classList.add('glass-effect', 'bg-gray-darker', 'bg-opacity-80');
+        } else {
+          navbar.classList.remove('glass-effect', 'bg-gray-darker', 'bg-opacity-80');
+        }
+      });
+      
+      // Mobile menu toggle - 修复：确保只绑定一次
+      mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+      
+      // 平滑滚动导航
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href');
+          const targetSection = document.querySelector(targetId);
+          
+          if (targetSection) {
+            // 关闭移动菜单
+            mobileMenu.classList.add('hidden');
+            
+            // 平滑滚动到目标部分
+            targetSection.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+      
+      // Close video modal
+      closeModal.addEventListener('click', () => {
+        videoModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        modalVideo.pause();
+        modalVideo.src = '';
+      });
+      
+      // Close AI image modal
+      closeAiModal.addEventListener('click', () => {
+        aiImageModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        // 重置3D效果
+        const aiImage = document.getElementById('modal-ai-image');
+        aiImage.style.transform = 'none';
+      });
+      
+      // Close modals when clicking outside
+      videoModal.addEventListener('click', (e) => {
+        if (e.target === videoModal) {
+          closeModal.click();
+        }
+      });
+      
+      aiImageModal.addEventListener('click', (e) => {
+        if (e.target === aiImageModal) {
+          closeAiModal.click();
+        }
+      });
+      
+      // Search functionality
+      searchBtn.addEventListener('click', performSearch);
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          performSearch();
+        }
+      });
+      
+      // 加载更多视频作品
+      loadMoreWorksBtn.addEventListener('click', () => {
+        worksVisible += 6;
+        renderWorks(currentFilteredWorks.slice(0, worksVisible));
+      });
+      
+      // 加载更多AI作品
+      loadMoreAiBtn.addEventListener('click', () => {
+        aiWorksVisible += 8;
+        renderAIWorks(aiWorksData.slice(0, aiWorksVisible));
+      });
+      
+      // 实时搜索功能
+      searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        
+        if (searchTerm === '') {
+          searchResults.classList.add('hidden');
+          // 重置为当前分类的筛选结果
+          filterWorks();
+          return;
+        }
+        
+        const filteredWorks = worksData.filter(work => 
+          work.title.toLowerCase().includes(searchTerm) || 
+          work.category.toLowerCase().includes(searchTerm) ||
+          work.role.toLowerCase().includes(searchTerm)
+        );
+        
+        // 显示搜索结果下拉框
+        searchResults.innerHTML = '';
+        
+        if (filteredWorks.length > 0) {
+          filteredWorks.forEach(work => {
+            const resultItem = document.createElement('div');
+            resultItem.className = 'p-3 hover:bg-gray-dark cursor-pointer border-b border-white border-opacity-10 transition-colors duration-300';
+            resultItem.innerHTML = `
+              <div class="flex items-center">
+                <img src="${work.cover}" alt="${work.title}" class="w-10 h-10 object-cover mr-3 rounded-sm">
+                <div>
+                  <p class="font-medium">${work.title}</p>
+                  <p class="text-xs text-gray-light">${work.category} • ${work.date}</p>
+                </div>
+              </div>
+            `;
+            resultItem.addEventListener('click', () => {
+              openVideoModal(work);
+              searchResults.classList.add('hidden');
+              searchInput.value = '';
+            });
+            searchResults.appendChild(resultItem);
+          });
+          searchResults.classList.remove('hidden');
+        } else {
+          const noResults = document.createElement('div');
+          noResults.className = 'p-3 text-center text-gray-light';
+          noResults.textContent = '没有找到匹配的作品';
+          searchResults.appendChild(noResults);
+          searchResults.classList.remove('hidden');
+        }
+      });
+      
+      // 点击页面其他区域关闭搜索结果
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+          searchResults.classList.add('hidden');
+        }
+      });
+      
+      // Category filter
+      categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Update active state
+          categoryBtns.forEach(b => {
+            b.classList.remove('active', 'bg-accent', 'text-black');
+            b.classList.add('glass-effect');
+          });
+          btn.classList.add('active', 'bg-accent', 'text-black');
+          btn.classList.remove('glass-effect');
+          
+          // Update category
+          currentCategory = btn.dataset.category;
+          
+          // Reset visible count when category changes
+          worksVisible = 6;
+          
+          // Filter works
+          filterWorks();
+        });
+      });
+      
+      // Contact items hover effect
+      contactItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+          const icon = item.querySelector('i');
+          
+          icon.style.transition = 'transform 0.3s ease';
+          icon.style.transform = 'rotate(30deg) scale(1.2)';
+        });
+        
+        item.addEventListener('mouseleave', () => {
+          const icon = item.querySelector('i');
+          
+          icon.style.transform = 'rotate(0) scale(1)';
+        });
+      });
+    }
+    
+    // Perform Search
+    function performSearch() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      
+      if (searchTerm === '') {
+        filterWorks();
+        return;
+      }
+      
+      const filteredWorks = worksData.filter(work => 
+        work.title.toLowerCase().includes(searchTerm) || 
+        work.category.toLowerCase().includes(searchTerm) ||
+        work.role.toLowerCase().includes(searchTerm)
+      );
+      
+      // 搜索时重置显示数量
+      worksVisible = filteredWorks.length;
+      renderWorks(filteredWorks);
+    }
+    
+    // Filter Works by Category
+    function filterWorks() {
+      if (currentCategory === 'all') {
+        currentFilteredWorks = worksData;
+      } else {
+        currentFilteredWorks = worksData.filter(work => work.category === currentCategory);
+      }
+      
+      renderWorks(currentFilteredWorks.slice(0, worksVisible));
+    }
+  </script>
+  
+  <script>
+      // 可以添加一些额外的交互效果
+      document.addEventListener('DOMContentLoaded', function() {
+        const contactLinks = document.querySelectorAll('.contact-link');
+        
+        contactLinks.forEach(link => {
+          link.addEventListener('mouseenter', function() {
+            this.style.transition = 'all 0.3s ease';
+          });
+        });
+      });
+    </script>
+</body>
+</html>
